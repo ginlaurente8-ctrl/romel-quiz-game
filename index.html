@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dynamic Quiz</title>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<style>
+
+/* BACKGROUND */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 40px;
+    background: linear-gradient(135deg, #a16eff, pink);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    min-height: 100vh;
+    color: #333;
+}
+
+/* MAIN BOX */
+.centerBox {
+    width: 90%;
+    max-width: 600px;
+    padding: 30px;
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 6px 15px rgba(0,0,0,0.2);
+    text-align: center;
+    animation: fadeIn 0.6s ease;
+}
+
+/* Fade animation */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Bounce animation for score */
+@keyframes pop {
+    0% { transform: scale(0.6); opacity: 0; }
+    60% { transform: scale(1.15); opacity: 1; }
+    100% { transform: scale(1); }
+}
+
+/* Glow for correct answers */
+@keyframes glowGreen {
+    from { box-shadow: 0 0 0px #28a745; }
+    to { box-shadow: 0 0 12px #28a745; }
+}
+
+/* Glow for incorrect answers */
+@keyframes glowRed {
+    from { box-shadow: 0 0 0px #dc3545; }
+    to { box-shadow: 0 0 12px #dc3545; }
+}
+
+/* START BUTTON */
+#startBtn {
+    padding: 14px 30px;
+    font-size: 20px;
+    background: #7f3dff;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+#startBtn:hover {
+    background: #9b63ff;
+    transform: scale(1.05);
+}
+
+/* QUESTION BOXES */
+.question {
+    display: none;
+    margin-bottom: 20px;
+    padding: 20px;
+    border-radius: 10px;
+    background: #f7f7ff;
+    border-left: 6px solid #7f3dff;
+    animation: fadeIn 0.6s ease;
+}
+
+.correct {
+    border-color: #28a745;
+    background: #e6ffe6;
+    animation: glowGreen 0.6s alternate infinite;
+}
+
+.incorrect {
+    border-color: #dc3545;
+    background: #ffe6e6;
+    animation: glowRed 0.6s alternate infinite;
+}
+
+/* BUTTONS */
+button {
+    padding: 12px 20px;
+    background: #6f7dff;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: 0.3s;
+    margin-top: 10px;
+}
+
+button:hover {
+    background: #8c97ff;
+    transform: scale(1.05);
+}
+
+/* SCORE BOX */
+#scoreBox {
+    margin-top: 20px;
+    font-size: 18px;
+    font-weight: bold;
+    padding: 15px;
+    border-radius: 12px;
+    background: #f7f7ff;
+    display: none;
+}
+
+
+.centerBox {
+    width: 90%;
+    max-width: 600px;
+    padding: 5vw;
+}
+
+h1 {
+    font-size: clamp(22px, 5vw, 32px);
+}
+
+p, label, button {
+    font-size: clamp(14px, 3.5vw, 18px);
+}
+
+button,
+#startBtn {
+    padding: 3vw 5vw;
+}
+
+.question {
+    padding: 4vw;
+    margin-bottom: 5vw;
+}
+
+#scoreBox {
+    margin-top: 4vw;
+    font-size: clamp(14px, 4vw, 20px);
+    padding: 3vw;
+}
+
+label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 8px 0;
+}
+
+
+@media (max-width: 480px) {
+    body {
+        padding: 20px;
+    }
+
+    #toggleQuestions, #submitQuiz {
+        width: 100%;
+        padding: 12px;
+    }
+}
+
+</style>
+</head>
+
+<body>
+
+<!-- START SCREEN -->
+<div id="startScreen" class="centerBox">
+    <h1>ARE YOU READY FOR A QUIZ?</h1>
+    <p>CLICK START</p>
+    <button id="startBtn">START</button>
+</div>
+
+<!-- QUIZ CONTENT -->
+<div id="quizContent" class="centerBox" style="display:none;">
+    <h1>Quiz Time 🎉</h1>
+
+    <button id="toggleQuestions">Show Questions</button>
+
+    <div id="quiz">
+
+        <!-- 1 -->
+        <div class="question" data-answer="b">
+            <p><strong>1. What does HTML stand for?</strong></p>
+            <label><input type="radio" name="q1" value="a"> Hyper Trainer Marking Language</label>
+            <label><input type="radio" name="q1" value="b"> HyperText Markup Language</label>
+            <label><input type="radio" name="q1" value="c"> Hybrid Text Markup Leveler</label>
+        </div>
+
+        <!-- 2 -->
+        <div class="question" data-answer="a">
+            <p><strong>2. Which symbol is used for IDs in jQuery?</strong></p>
+            <label><input type="radio" name="q2" value="a"> #</label>
+            <label><input type="radio" name="q2" value="b"> .</label>
+            <label><input type="radio" name="q2" value="c"> $</label>
+        </div>
+
+        <!-- 3 -->
+        <div class="question" data-answer="c">
+            <p><strong>3. jQuery is a ______</strong></p>
+            <label><input type="radio" name="q3" value="a"> Database</label>
+            <label><input type="radio" name="q3" value="b"> Backend framework</label>
+            <label><input type="radio" name="q3" value="c"> JavaScript library</label>
+        </div>
+
+        <!-- 4 -->
+        <div class="question" data-answer="c">
+            <p><strong>4. Which method displays a popup alert message?</strong></p>
+            <label><input type="radio" name="q4" value="a"> showBox()</label>
+            <label><input type="radio" name="q4" value="b"> print()</label>
+            <label><input type="radio" name="q4" value="c"> alert()</label>
+            <label><input type="radio" name="q4" value="d"> messageBox()</label>
+        </div>
+
+        <!-- 5 -->
+        <div class="question" data-answer="b">
+            <p><strong>5. What tag is used to embed JavaScript in HTML?</strong></p>
+            <label><input type="radio" name="q5" value="a">&lt;style&gt;</label>
+            <label><input type="radio" name="q5" value="b">&lt;script&gt;</label>
+            <label><input type="radio" name="q5" value="c">&lt;java&gt;</label>
+            <label><input type="radio" name="q5" value="d">&lt;embed&gt;</label>
+        </div>
+
+        <!-- 6 -->
+        <div class="question" data-answer="b">
+            <p><strong>6. Which JavaScript method writes directly into the browser console?</strong></p>
+            <label><input type="radio" name="q6" value="a"> console.write()</label>
+            <label><input type="radio" name="q6" value="b"> console.log()</label>
+            <label><input type="radio" name="q6" value="c"> innerHTML()</label>
+            <label><input type="radio" name="q6" value="d"> logHTML()</label>
+        </div>
+
+        <!-- 7 -->
+        <div class="question" data-answer="b">
+            <p><strong>7. JavaScript files should use which file extension?</strong></p>
+            <label><input type="radio" name="q7" value="a"> .jvs</label>
+            <label><input type="radio" name="q7" value="b"> .js</label>
+            <label><input type="radio" name="q7" value="c"> .script</label>
+            <label><input type="radio" name="q7" value="d"> .html</label>
+        </div>
+
+        <!-- 8 -->
+        <div class="question" data-answer="c">
+            <p><strong>8. Which JavaScript method finds an HTML element by its ID?</strong></p>
+            <label><input type="radio" name="q8" value="a"> findID()</label>
+            <label><input type="radio" name="q8" value="b"> query()</label>
+            <label><input type="radio" name="q8" value="c"> getElementById()</label>
+            <label><input type="radio" name="q8" value="d"> selectID()</label>
+        </div>
+
+        <!-- 9 -->
+        <div class="question" data-answer="a">
+            <p><strong>9. JavaScript can hide an HTML element using style.display = "none".</strong></p>
+            <label><input type="radio" name="q9" value="a"> True</label>
+            <label><input type="radio" name="q9" value="b"> False</label>
+        </div>
+
+        <!-- 10 (NEW) -->
+        <div class="question" data-answer="a">
+            <p><strong>10. External JavaScript helps make code easier to maintain and reuse.</strong></p>
+            <label><input type="radio" name="q10" value="a"> True</label>
+            <label><input type="radio" name="q10" value="b"> False</label>
+        </div>
+
+    </div>
+
+    <button id="submitQuiz">Submit Quiz</button>
+
+    <div id="scoreBox"></div>
+
+</div>
+
+<script>
+$(document).ready(function() {
+
+    /* START BUTTON */
+    $("#startBtn").click(function() {
+        $("#startScreen").fadeOut(500, function() {
+            $("#quizContent").fadeIn(600);
+        });
+    });
+
+    // Toggle questions
+    $("#toggleQuestions").click(function() {
+        $(".question").slideToggle(300);
+        $(this).text(function(i, text){
+            return text === "Show Questions" ? "Hide Questions" : "Show Questions";
+        });
+    });
+
+    // Submit quiz
+    $("#submitQuiz").click(function() {
+        let score = 0;
+        let total = $(".question").length;
+        let allAnswered = true;
+
+        $(".question").removeClass("correct incorrect");
+
+        $(".question").each(function() {
+            if (!$(this).find("input[type=radio]:checked").length) {
+                allAnswered = false;
+            }
+        });
+
+        if (!allAnswered) {
+            $("#scoreBox")
+                .text("⚠ Please answer all questions before submitting.")
+                .css("display", "block")
+                .css("animation", "pop 0.4s ease");
+            return;
+        }
+
+        $(".question").each(function() {
+            let correct = $(this).data("answer");
+            let selected = $(this).find("input[type=radio]:checked").val();
+
+            if (selected === correct) {
+                score++;
+                $(this).addClass("correct");
+            } else {
+                $(this).addClass("incorrect");
+            }
+        });
+
+        $("#scoreBox")
+            .text("You scored: " + score + " / " + total + " 🎉")
+            .css("display", "block")
+            .css("animation", "pop 0.4s ease");
+
+        localStorage.setItem("lastQuizScore", score + "/" + total);
+    });
+
+    let savedScore = localStorage.getItem("lastQuizScore");
+    if (savedScore) {
+        $("#scoreBox")
+            .text("Last score: " + savedScore)
+            .css("display", "block");
+    }
+
+});
+</script>
+
+</body>
+</html>
