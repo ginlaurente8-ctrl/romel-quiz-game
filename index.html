@@ -47,13 +47,12 @@ body {
     100% { transform: scale(1); }
 }
 
-/* Glow for correct answers */
+/* Glow animations */
 @keyframes glowGreen {
     from { box-shadow: 0 0 0px #28a745; }
     to { box-shadow: 0 0 12px #28a745; }
 }
 
-/* Glow for incorrect answers */
 @keyframes glowRed {
     from { box-shadow: 0 0 0px #dc3545; }
     to { box-shadow: 0 0 12px #dc3545; }
@@ -128,36 +127,13 @@ button:hover {
     display: none;
 }
 
-
-.centerBox {
-    width: 90%;
-    max-width: 600px;
-    padding: 5vw;
-}
-
-h1 {
-    font-size: clamp(22px, 5vw, 32px);
-}
-
-p, label, button {
-    font-size: clamp(14px, 3.5vw, 18px);
-}
-
-button,
-#startBtn {
-    padding: 3vw 5vw;
-}
-
-.question {
-    padding: 4vw;
-    margin-bottom: 5vw;
-}
-
-#scoreBox {
-    margin-top: 4vw;
-    font-size: clamp(14px, 4vw, 20px);
-    padding: 3vw;
-}
+/* Responsive adjustments */
+.centerBox { padding: 5vw; }
+h1 { font-size: clamp(22px, 5vw, 32px); }
+p, label, button { font-size: clamp(14px, 3.5vw, 18px); }
+button, #startBtn { padding: 3vw 5vw; }
+.question { padding: 4vw; margin-bottom: 5vw; }
+#scoreBox { margin-top: 4vw; font-size: clamp(14px, 4vw, 20px); padding: 3vw; }
 
 label {
     display: flex;
@@ -166,18 +142,20 @@ label {
     margin: 8px 0;
 }
 
-
 @media (max-width: 480px) {
-    body {
-        padding: 20px;
-    }
-
-    #toggleQuestions, #submitQuiz {
-        width: 100%;
-        padding: 12px;
-    }
+    body { padding: 20px; }
+    #toggleQuestions, #submitQuiz { width: 100%; padding: 12px; }
 }
 
+</style>
+</head>
+<body>
+
+<!-- START SCREEN -->
+<div id="startScreen" class="centerBox">
+    <h1>Welcome to the Quiz 🎉</h1>
+    <button id="startBtn">Start Quiz</button>
+</div>
 
 <!-- QUIZ CONTENT -->
 <div id="quizContent" class="centerBox" style="display:none;">
@@ -187,6 +165,7 @@ label {
 
     <div id="quiz">
 
+        <!-- QUESTIONS (UNCHANGED) -->
         <!-- 1 -->
         <div class="question" data-answer="b">
             <p><strong>1. What does HTML stand for?</strong></p>
@@ -263,7 +242,7 @@ label {
             <label><input type="radio" name="q9" value="b"> False</label>
         </div>
 
-        <!-- 10 (NEW) -->
+        <!-- 10 -->
         <div class="question" data-answer="a">
             <p><strong>10. External JavaScript helps make code easier to maintain and reuse.</strong></p>
             <label><input type="radio" name="q10" value="a"> True</label>
@@ -350,3 +329,4 @@ $(document).ready(function() {
 
 </body>
 </html>
+
